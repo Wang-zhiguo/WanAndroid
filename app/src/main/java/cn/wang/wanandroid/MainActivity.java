@@ -34,10 +34,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        //1.创建OkHttpClient对象
         OkHttpClient client = new OkHttpClient();
+        //2.创建Request对象，设置一个url地址。
         Request request = new Request.Builder()
-                .url("https://www.wanandroid.com/article/list/1/json")
+                .url("https://www.wanandroid.com/article/list/0/json")
                 .build();
+        //3.创建一个call对象,参数就是Request请求对象，并异步执行
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -45,19 +48,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){//回调的方法执行在子线程。
-                    Log.d("kwwl","获取数据成功了");
+                    //使用Gson解析
                     Gson gson = new Gson();
                     ArticleBean articleBean = gson.fromJson(response.body().string(), ArticleBean.class);
+                    //注意：目前执行在新线程中，若操作主线程View，需要runOnUiThread
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            //数据送给适配器
                             adapter.setDatas(articleBean.getData().getDatas());
+                            //刷新
                             adapter.notifyDataSetChanged();
                         }
                     });
-//                    for (ArticleBean.DataBean.DatasBean bean:articleBean.getData().getDatas()) {
-//                        Log.d("kwwl",bean.getTitle());
-//                    }
                 }
             }
         });

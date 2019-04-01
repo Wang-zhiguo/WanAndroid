@@ -2,6 +2,9 @@ package cn.wang.wanandroid;
 
 import java.util.List;
 
+/**
+ * 借助于GsonFormat生成的Bean类
+ */
 public class ArticleBean {
 
     /**
